@@ -63,11 +63,10 @@ if __name__ == "__main__":
     pdf_folder_path = '/Users/bogdan/Documents/MB_GLE/FacturiIncarcare'
 
     for file in os.listdir(pdf_folder_path):
-        file_path = os.path.join(folder_path, file)
+        file_path = os.path.join(pdf_folder_path, file)
         if os.path.isfile(file_path) and file.lower().endswith(".pdf"):
 
             extracted_text = extract_text_from_pdf(file_path)
-            print(extracted_text)
 
             total_ron = extract_total_ron(extracted_text)
             invoice_date = extract_invoice_date(extracted_text)
