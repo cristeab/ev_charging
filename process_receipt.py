@@ -4,6 +4,7 @@ from PIL import Image
 import PyPDF2
 import io
 import re
+import os
 
 
 # Function to extract text from a PDF using OCR
@@ -59,16 +60,20 @@ def extract_vat(text):
 
 if __name__ == "__main__":
     # path to your PDF file
-    pdf_file_path = '/Users/bogdan/Documents/MB_GLE/FacturiIncarcare/23EXWFA00018392_0323.pdf'
+    pdf_folder_path = '/Users/bogdan/Documents/MB_GLE/FacturiIncarcare'
 
-    extracted_text = extract_text_from_pdf(pdf_file_path)
-    print(extracted_text)
+    for file in os.listdir(pdf_folder_path):
+        file_path = os.path.join(folder_path, file)
+        if os.path.isfile(file_path) and file.lower().endswith(".pdf"):
 
-    total_ron = extract_total_ron(extracted_text)
-    invoice_date = extract_invoice_date(extracted_text)
-    vat = extract_vat(extracted_text)
-    details = extract_kwh_details(extracted_text)[0]
-    energy_kwh = float(details[0])
-    price_per_kwh = round(float(details[1]) * (1 + vat / 100), 2)
-    print(f"{invoice_date}: {energy_kwh} kWh x {price_per_kwh} RON/kWh = {total_ron} RON")
+            extracted_text = extract_text_from_pdf(file_path)
+            print(extracted_text)
+
+            total_ron = extract_total_ron(extracted_text)
+            invoice_date = extract_invoice_date(extracted_text)
+            vat = extract_vat(extracted_text)
+            details = extract_kwh_details(extracted_text)[0]
+            energy_kwh = float(details[0])
+            price_per_kwh = round(float(details[1]) * (1 + vat / 100), 2)
+            print(f"{invoice_date}: {energy_kwh} kWh x {price_per_kwh} RON/kWh = {total_ron} RON")
 
