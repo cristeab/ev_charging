@@ -44,7 +44,7 @@ def extract_invoice_date(text):
     return None
 
 def extract_kwh_details(text):
-    # Pattern to match <date> <kWh> kWh x RON <price>/kWh RON <total_price>
+    # Pattern to match <kWh> kWh x RON <price>/kWh RON <total_price>
     pattern_kwh_details = r"(\d+\.\d{2})\s+kWh\s+x\s+RON\s+(\d+\.\d+)\s*/kWh\s+RON\s+(\d+\.\d{2})"
     matches_kwh = re.findall(pattern_kwh_details, text)
     kwh_list = []
@@ -62,6 +62,12 @@ def extract_vat(text):
         return int(vat_amount)
     return 0
 
+def price_with_vat(price, vat):
+    return round(price * (1 + vat / 100), 2)
+
+def are_floats_equal(a, b, epsilon=1e-9):
+    return abs(a - b) < epsilon
+
 if __name__ == "__main__":
     # path to your PDF file
     pdf_folder_path = '/Users/bogdan/Documents/MB_GLE/FacturiIncarcare'
@@ -76,19 +82,27 @@ if __name__ == "__main__":
         if os.path.isfile(file_path) and file.lower().endswith(".pdf"):
 
             extracted_text = extract_text_from_pdf(file_path)
+            vat = extract_vat(extracted_text)
+            total_ron_per_invoice = extract_total_ron(extracted_text)
 
             invoice_date = extract_invoice_date(extracted_text)
             datetime_date = datetime.strptime(invoice_date, "%d/%m/%Y")
-            details = extract_kwh_details(extracted_text)[0]
-            total_kwh = float(details[0])
-            vat = extract_vat(extracted_text)
-            price_per_kwh = round(float(details[1]) * (1 + vat / 100), 2)
-            total_ron = extract_total_ron(extracted_text)
+            details_list = extract_kwh_details(extracted_text)
+            total_ron_sum = 0
+            for details in details_list:
+                total_kwh = float(details[0])
+                price_per_kwh = price_with_vat(float(details[1]), vat)
+                total_ron = price_with_vat(float(details[2]), vat)
 
-            dates.append(datetime_date)
-            total_cost_kwh.append(total_kwh)
-            cost_per_kwh.append(price_per_kwh)
-            total_cost_ron.append(total_ron)
+                dates.append(datetime_date)
+                total_cost_kwh.append(total_kwh)
+                cost_per_kwh.append(price_per_kwh)
+                total_cost_ron.append(total_ron)
+                total_ron_sum += total_ron
+            if 1 < len(details_list):
+                print(f'Found invoice with multiple charges on {invoice_date}')
+            if not are_floats_equal(total_ron_sum, total_ron_per_invoice, 0.01):
+                print(f'On {invoice_date} the total per invoice {total_ron_per_invoice} does not match the sum {total_ron_sum}')
 
 data_table = pd.DataFrame({
     'invoice date': dates,
@@ -114,7 +128,7 @@ monthly_total_kwh_df = monthly_total_kwh.reset_index()
 
 # Create a bar plot graph
 plt.bar(monthly_total_ron_df['month'], monthly_total_ron_df['total RON'], label='RON')
-plt.xlabel('Time')
+plt.xlabel('Date')
 plt.ylabel('Total')
 plt.title('Total per Month')
 plt.xticks(range(1, 13), calendar.month_abbr[1:13])  # To show month abbreviations on x-axis
