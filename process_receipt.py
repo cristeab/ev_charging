@@ -25,6 +25,13 @@ def extract_text_from_pdf(pdf_path):
     pdf_file.close()
     return text
 
+def extract_subscription_type(text):
+    pattern = r'(Basic X|Premium X|Quick Recharge)'
+    match = re.search(pattern, text)
+    if match:
+        return match.group(0)
+    return None
+
 def extract_total_ron(text):
     # Pattern to match TOTAL: RON <amount>
     pattern_total_ron = r"TOTAL:\s*RON\s*(\d+\.\d{2})"
@@ -72,6 +79,7 @@ if __name__ == "__main__":
     # path to your PDF file
     pdf_folder_path = '/Users/bogdan/Documents/Auto/MB_GLE/FacturiIncarcare'
 
+    subscriptions = []
     dates = []
     total_cost_kwh = []
     cost_per_kwh = []
@@ -82,6 +90,7 @@ if __name__ == "__main__":
         if os.path.isfile(file_path) and file.lower().endswith(".pdf"):
 
             extracted_text = extract_text_from_pdf(file_path)
+            subscription = extract_subscription_type(extracted_text)
             vat = extract_vat(extracted_text)
             total_ron_per_invoice = extract_total_ron(extracted_text)
 
@@ -94,6 +103,7 @@ if __name__ == "__main__":
                 price_per_kwh = price_with_vat(float(details[1]), vat)
                 total_ron = price_with_vat(float(details[2]), vat)
 
+                subscriptions.append(subscription)
                 dates.append(datetime_date)
                 total_cost_kwh.append(total_kwh)
                 cost_per_kwh.append(price_per_kwh)
@@ -101,11 +111,29 @@ if __name__ == "__main__":
                 total_ron_sum += total_ron
             if 1 < len(details_list):
                 print(f'Found invoice with multiple charges on {invoice_date}')
-            if not are_floats_equal(total_ron_sum, total_ron_per_invoice, 0.01):
+            if 'Quick Recharge' in subscription and not are_floats_equal(total_ron_sum, total_ron_per_invoice, 0.01):
                 print(f'On {invoice_date} the total per invoice {total_ron_per_invoice} does not match the sum {total_ron_sum}')
-                print(extracted_text)
+            elif subscription and 'Quick Recharge' not in subscription:
+                print(f'On {invoice_date} found {subscription} subscription with total per invoice {total_ron_per_invoice} RON')
+                total_kwh = 0
+                price_per_kwh = 0
+                if 'Basic X' in subscription:
+                    total_kwh = 60
+                elif 'Premium X' in subscription:
+                    total_kwh = 120
+                if 0 < total_kwh:
+                    price_per_kwh = total_ron_per_invoice / total_kwh
+
+                subscriptions.append(subscription)
+                dates.append(datetime_date)
+                total_cost_kwh.append(total_kwh)
+                cost_per_kwh.append(price_per_kwh)
+                total_cost_ron.append(total_ron_per_invoice)
+            elif not subscription:
+                print(f'On {invoice_date} found unknown subscription with total per invoice {total_ron_per_invoice} RON')
 
 data_table = pd.DataFrame({
+    'subscription': subscriptions,
     'invoice date': dates,
     'total kWh': total_cost_kwh,
     'cost RON/kWh': cost_per_kwh,
