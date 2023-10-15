@@ -26,7 +26,7 @@ To run this script, you need to set up a Python environment and install the foll
 4. Run the script using Python 3:
 
    ```shell
-   ./process_receipt.py
+   ./process_invoice.py
 
 ## Sample Output
 
