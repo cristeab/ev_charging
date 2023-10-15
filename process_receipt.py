@@ -116,13 +116,11 @@ if __name__ == "__main__":
             elif subscription and 'Quick Recharge' not in subscription:
                 print(f'On {invoice_date} found {subscription} subscription with total per invoice {total_ron_per_invoice} RON')
                 total_kwh = 0
-                price_per_kwh = 0
                 if 'Basic X' in subscription:
                     total_kwh = 60
                 elif 'Premium X' in subscription:
                     total_kwh = 120
-                if 0 < total_kwh:
-                    price_per_kwh = total_ron_per_invoice / total_kwh
+                price_per_kwh = total_ron_per_invoice / total_kwh if 0 < total_kwh else 0
 
                 subscriptions.append(subscription)
                 dates.append(datetime_date)
