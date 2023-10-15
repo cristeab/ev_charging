@@ -70,7 +70,7 @@ def are_floats_equal(a, b, epsilon=1e-9):
 
 if __name__ == "__main__":
     # path to your PDF file
-    pdf_folder_path = '/Users/bogdan/Documents/MB_GLE/FacturiIncarcare'
+    pdf_folder_path = '/Users/bogdan/Documents/Auto/MB_GLE/FacturiIncarcare'
 
     dates = []
     total_cost_kwh = []
@@ -103,6 +103,7 @@ if __name__ == "__main__":
                 print(f'Found invoice with multiple charges on {invoice_date}')
             if not are_floats_equal(total_ron_sum, total_ron_per_invoice, 0.01):
                 print(f'On {invoice_date} the total per invoice {total_ron_per_invoice} does not match the sum {total_ron_sum}')
+                print(extracted_text)
 
 data_table = pd.DataFrame({
     'invoice date': dates,
@@ -130,7 +131,7 @@ monthly_total_kwh_df = monthly_total_kwh.reset_index()
 plt.bar(monthly_total_ron_df['month'], monthly_total_ron_df['total RON'], label='RON')
 plt.xlabel('Date')
 plt.ylabel('Total')
-plt.title('Total per Month')
+plt.title('EV Charging Fees at Enel X Way')
 plt.xticks(range(1, 13), calendar.month_abbr[1:13])  # To show month abbreviations on x-axis
 
 plt.bar(monthly_total_kwh_df['month'], monthly_total_kwh_df['total kWh'], label='kWh')
