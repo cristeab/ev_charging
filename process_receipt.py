@@ -11,7 +11,10 @@ import matplotlib.pyplot as plt
 import calendar
 
 
-# Function to extract text from a PDF using OCR
+# path to your folder with PDF files
+home_path = os.path.expanduser("~")
+pdf_folder_path = os.path.join(home_path, 'Documents/Auto/MB_GLE/FacturiIncarcare')
+
 def extract_text_from_pdf(pdf_path):
     text = ""
     pdf_file = open(pdf_path, 'rb')
@@ -76,9 +79,6 @@ def are_floats_equal(a, b, epsilon=1e-9):
     return abs(a - b) < epsilon
 
 if __name__ == "__main__":
-    # path to your PDF file
-    pdf_folder_path = '/Users/bogdan/Documents/Auto/MB_GLE/FacturiIncarcare'
-
     subscriptions = []
     dates = []
     total_cost_kwh = []
