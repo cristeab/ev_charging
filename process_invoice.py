@@ -2,7 +2,6 @@
 
 from PIL import Image
 import PyPDF2
-import io
 import re
 import os
 import pandas as pd
