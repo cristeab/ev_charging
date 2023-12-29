@@ -6,7 +6,8 @@ import re
 import os
 
 
-file_path = '/Users/bogdan/Documents/Auto/MB_GLE/FacturiIncarcare/23EXWFA00057094_1223.pdf'
+# file_path = '/Users/bogdan/Documents/Auto/MB_GLE/FacturiIncarcare/23EXWFA00057094_1223.pdf'
+file_path = '/Users/bogdan/Documents/Auto/MB_GLE/FacturiIncarcare/23EXWFA00058604_1223.pdf'
 
 def extract_text_from_pdf(pdf_path):
     text = ""

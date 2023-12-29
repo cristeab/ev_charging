@@ -28,10 +28,10 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 def extract_subscription_type(text):
-    pattern = r'(Basic X|Premium X|Quick Recharge)'
+    pattern = r'(Basic X|Premium X|Quick Recharge)\s+RON\s+\d+\.\d{2}'
     match = re.search(pattern, text)
     if match:
-        return match.group(0)
+        return match.group(1)
     return None
 
 def extract_total_ron(text):
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                 total_ron_sum += total_ron
             if 1 < len(details_list):
                 print(f'Found invoice with multiple charges on {invoice_date}')
-            if 'Quick Recharge' in subscription and not are_floats_equal(total_ron_sum, total_ron_per_invoice, 0.01):
+            if subscription and 'Quick Recharge' in subscription and not are_floats_equal(total_ron_sum, total_ron_per_invoice, 0.01):
                 print(f'On {invoice_date} the total per invoice {total_ron_per_invoice} does not match the sum {total_ron_sum}')
             elif subscription and 'Quick Recharge' not in subscription:
                 print(f'On {invoice_date} found {subscription} subscription with total per invoice {total_ron_per_invoice} RON')
