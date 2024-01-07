@@ -157,13 +157,16 @@ monthly_total_kwh_df = monthly_total_kwh.reset_index()
 # Create a bar plot graph
 fig, ax = plt.subplots()
 
+ron_color = 'blue'
+kwh_color = 'orange'
+
 # Plot total RON
-ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='RON', color='steelblue')
+ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='RON', color=ron_color)
 ax.set_xlabel('Date')
 ax.set_ylabel('Total')
 ax.set_title('Electric Vehicle Charging Costs/kWh per Month')
 
-ax.bar(monthly_total_kwh_df.index, monthly_total_kwh_df['total kWh'], label='kWh', color='orange')
+ax.bar(monthly_total_kwh_df.index, monthly_total_kwh_df['total kWh'], label='kWh', color=kwh_color)
 
 # Set x-axis ticks and labels
 ax.set_xticks(range(len(monthly_total_ron_df)))
@@ -179,7 +182,7 @@ for index, row in monthly_total_kwh_df.iterrows():
         textcoords="offset points",
         ha='center',
         va='bottom',
-        color='orange',
+        color=kwh_color,
         rotation=45,
         fontsize=8
     )
@@ -193,7 +196,7 @@ for index, row in monthly_total_ron_df.iterrows():
         textcoords="offset points",
         ha='center',
         va='bottom',
-        color='steelblue',
+        color=ron_color,
         fontsize=8
     )
 
