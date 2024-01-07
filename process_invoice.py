@@ -144,6 +144,8 @@ print(data_table_sorted)
 data_table_sorted['year'] = data_table_sorted['invoice date'].dt.year
 data_table_sorted['month'] = data_table_sorted['invoice date'].dt.month
 
+print(data_table_sorted)
+
 # Group data by year and month and sum the 'total RON' for each month
 monthly_total_ron = data_table_sorted.groupby(['year', 'month'])['total RON'].sum()
 monthly_total_kwh = data_table_sorted.groupby(['year', 'month'])['total kWh'].sum()
@@ -152,22 +154,33 @@ monthly_total_kwh = data_table_sorted.groupby(['year', 'month'])['total kWh'].su
 monthly_total_ron_df = monthly_total_ron.reset_index()
 monthly_total_kwh_df = monthly_total_kwh.reset_index()
 
-# Create a bar plot graph
-plt.bar(monthly_total_ron_df['month'], monthly_total_ron_df['total RON'], label='RON')
-plt.xlabel('Date')
-plt.ylabel('Total')
-plt.title('EV Charging Fees at Enel X Way')
-plt.xticks(range(1, 13), calendar.month_abbr[1:13])  # To show month abbreviations on x-axis
+print(monthly_total_ron_df)
 
-plt.bar(monthly_total_kwh_df['month'], monthly_total_kwh_df['total kWh'], label='kWh')
+# Create a bar plot graph
+fig, ax = plt.subplots()
+
+# Plot total RON
+ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='Total RON')
+ax.set_xlabel('Month')
+ax.set_ylabel('Total RON')
+ax.set_title('Electric Vehicle Charging Costs per Month')
+
+# Set x-axis ticks and labels
+ax.set_xticks(range(len(monthly_total_ron_df)))
+ax.set_xticklabels([calendar.month_abbr[month] for month in monthly_total_ron_df['month']])
 
 # Annotate the bars with the total cost values
-for x, y in zip(monthly_total_ron_df['month'], monthly_total_ron_df['total RON']):
-    plt.text(x, y, str(round(y, 2)), ha='center', va='bottom', fontsize=8)
+for index, row in monthly_total_ron_df.iterrows():
+    ax.annotate(
+        f"{row['total RON']:.2f}",
+        xy=(index, row['total RON']),
+        xytext=(0, 3),
+        textcoords="offset points",
+        ha='center',
+        va='bottom',
+        fontsize=8
+    )
 
-for x, y in zip(monthly_total_kwh_df['month'], monthly_total_kwh_df['total kWh']):
-    plt.text(x, y, str(round(y, 2)), ha='center', va='bottom', color='white', fontsize=8, rotation=45)
-
+# Show the plot
 plt.legend()
-
 plt.show()
