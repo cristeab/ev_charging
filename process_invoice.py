@@ -160,7 +160,7 @@ fig, ax = plt.subplots()
 # Plot total RON
 ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='RON')
 ax.set_xlabel('Date')
-ax.set_ylabel('Total RON/kWh')
+ax.set_ylabel('Total')
 ax.set_title('Electric Vehicle Charging Costs/kWh per Month')
 
 ax.bar(monthly_total_kwh_df.index, monthly_total_kwh_df['total kWh'], label='kWh')
