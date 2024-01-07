@@ -159,7 +159,7 @@ fig, ax = plt.subplots()
 
 # Plot total RON
 ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='RON')
-ax.set_xlabel('Month')
+ax.set_xlabel('Date')
 ax.set_ylabel('Total RON/kWh')
 ax.set_title('Electric Vehicle Charging Costs/kWh per Month')
 
@@ -167,7 +167,8 @@ ax.bar(monthly_total_kwh_df.index, monthly_total_kwh_df['total kWh'], label='kWh
 
 # Set x-axis ticks and labels
 ax.set_xticks(range(len(monthly_total_ron_df)))
-ax.set_xticklabels([calendar.month_abbr[month] for month in monthly_total_ron_df['month']])
+# ax.set_xticklabels([calendar.month_abbr[month] for month in monthly_total_ron_df['month']])
+ax.set_xticklabels([f"{calendar.month_abbr[int(row['month'])]} {int(row['year'])%100}" for _, row in monthly_total_ron_df.iterrows()], fontsize=8)
 
 # Annotate the bars with the total cost values
 for index, row in monthly_total_kwh_df.iterrows():
