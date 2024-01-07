@@ -154,22 +154,36 @@ monthly_total_kwh = data_table_sorted.groupby(['year', 'month'])['total kWh'].su
 monthly_total_ron_df = monthly_total_ron.reset_index()
 monthly_total_kwh_df = monthly_total_kwh.reset_index()
 
-print(monthly_total_ron_df)
-
 # Create a bar plot graph
 fig, ax = plt.subplots()
 
 # Plot total RON
-ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='Total RON')
+ax.bar(monthly_total_ron_df.index, monthly_total_ron_df['total RON'], label='RON')
 ax.set_xlabel('Month')
-ax.set_ylabel('Total RON')
-ax.set_title('Electric Vehicle Charging Costs per Month')
+ax.set_ylabel('Total RON/kWh')
+ax.set_title('Electric Vehicle Charging Costs/kWh per Month')
+
+ax.bar(monthly_total_kwh_df.index, monthly_total_kwh_df['total kWh'], label='kWh')
 
 # Set x-axis ticks and labels
 ax.set_xticks(range(len(monthly_total_ron_df)))
 ax.set_xticklabels([calendar.month_abbr[month] for month in monthly_total_ron_df['month']])
 
 # Annotate the bars with the total cost values
+for index, row in monthly_total_kwh_df.iterrows():
+    ax.annotate(
+        f"{row['total kWh']:.2f}",
+        xy=(index, row['total kWh']),
+        xytext=(0, 3),
+        textcoords="offset points",
+        ha='center',
+        va='bottom',
+        color='white',
+        rotation=45,
+        fontsize=8
+    )
+
+# Annotate the bars with the total kWh
 for index, row in monthly_total_ron_df.iterrows():
     ax.annotate(
         f"{row['total RON']:.2f}",
