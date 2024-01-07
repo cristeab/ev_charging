@@ -166,7 +166,7 @@ for x, y in zip(monthly_total_ron_df['month'], monthly_total_ron_df['total RON']
     plt.text(x, y, str(round(y, 2)), ha='center', va='bottom', fontsize=8)
 
 for x, y in zip(monthly_total_kwh_df['month'], monthly_total_kwh_df['total kWh']):
-    plt.text(x, y, str(round(y, 2)), ha='center', va='bottom', color='white', fontsize=8)
+    plt.text(x, y, str(round(y, 2)), ha='center', va='bottom', color='white', fontsize=8, rotation=45)
 
 plt.legend()
 
