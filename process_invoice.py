@@ -199,6 +199,7 @@ for index, row in monthly_total_ron_df.iterrows():
         color=ron_color,
         fontsize=8
     )
+print(f"Total mean {monthly_total_kwh_df['total kWh'].mean():.2f} kWh @ {monthly_total_ron_df['total RON'].mean():.2f} RON")
 
 # Show the plot
 plt.legend()
